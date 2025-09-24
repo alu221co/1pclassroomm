@@ -4,14 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Classroom</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
-
 <style>
   body {
     margin: 0;
     font-family: 'Roboto', sans-serif;
-    background: linear-gradient(45deg, #ff416c, #f88391ff, #2080b3ff, #99f2c8);
+    background: linear-gradient(45deg, #ff416c, #f88391, #2080b3, #99f2c8);
     background-size: 400% 400%;
     animation: bgAnim 20s ease infinite;
     color: #fff;
@@ -20,13 +18,7 @@
     flex-direction: column;
     overflow: hidden;
   }
-
-  @keyframes bgAnim {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
+  @keyframes bgAnim { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
   header {
     padding: 20px;
     text-align: center;
@@ -34,13 +26,11 @@
     border-bottom: 2px solid #ffdd59;
     box-shadow: 0 5px 20px rgba(0,0,0,0.6);
   }
-
   header h1 {
     font-size: 2.3em;
     color: #ffdd59;
     text-shadow: 0 0 10px #fffb7d;
   }
-
   .games-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -50,7 +40,6 @@
     margin: auto;
     width: 100%;
   }
-
   .game-card {
     background: rgba(255,255,255,0.1);
     border-radius: 18px;
@@ -63,20 +52,12 @@
     font-family: 'Press Start 2P', cursive;
     border: 2px solid rgba(255, 221, 89, 0.3);
   }
-
   .game-card:hover {
     transform: translateY(-10px) scale(1.05);
     box-shadow: 0 12px 40px rgba(0,0,0,0.7), 0 0 20px #ffdd59;
     border-color: #ffdd59;
   }
-
-  .game-card h3 {
-    font-size: 1.3em;
-    color: #ffdd59;
-    text-shadow: 0 0 8px #fffb7d;
-    margin-top: 10px;
-  }
-
+  .game-card h3 { font-size: 1.3em; color: #ffdd59; text-shadow: 0 0 8px #fffb7d; margin-top: 10px; }
   #gamePanel {
     display: none;
     width: 100%;
@@ -89,7 +70,6 @@
     justify-content: center;
     align-items: center;
   }
-
   #closeBtn {
     position: absolute;
     top: 20px;
@@ -103,21 +83,8 @@
     cursor: pointer;
     box-shadow: 0 0 12px rgba(0,0,0,0.6);
   }
-
-  #game {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  #tetrisCanvas, #pongCanvas {
-    border: 4px solid #ffdd59;
-    background: #111;
-    display: block;
-    margin: 0 auto;
-  }
+  #game { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+  canvas { display: block; margin: 0 auto; }
 </style>
 </head>
 <body>
@@ -127,21 +94,14 @@
 </header>
 
 <div class="games-grid">
-  <div class="game-card" onclick="startTetris()">
-    <h3>🟦 Tetris</h3>
-  </div>
-  <div class="game-card" onclick="startMario()">
-    <h3>🍄 Mario Bros</h3>
-  </div>
-  <div class="game-card" onclick="startPong()">
-    <h3>🏓 Pong</h3>
-  </div>
-  <div class="game-card" onclick="startFutbol()">
-    <h3>⚽ Fútbol 2D</h3>
-  </div>
+  <div class="game-card" onclick="startTetris()"><h3>🟦 Tetris</h3></div>
+  <div class="game-card" onclick="startMario()"><h3>🍄 Mario Bros</h3></div>
+  <div class="game-card" onclick="startPong()"><h3>🏓 Pong</h3></div>
+  <div class="game-card" onclick="startFutbol()"><h3>⚽ Fútbol 2D</h3></div>
+  <div class="game-card" onclick="startFlappy()"><h3>🐦 Flappy Bird</h3></div>
 </div>
 
-<div id="gamePanel" style="display:none;">
+<div id="gamePanel">
   <button id="closeBtn" onclick="closeGame()">Cerrar</button>
   <div id="game"></div>
 </div>
@@ -149,13 +109,9 @@
 <script>
 const gameDiv = document.getElementById('game');
 const panel = document.getElementById('gamePanel');
+function closeGame(){ gameDiv.innerHTML=''; panel.style.display='none'; }
 
-function closeGame() {
-  gameDiv.innerHTML = '';
-  panel.style.display = 'none';
-}
-
-// ------------------- Tetris -------------------
+// ==================== TETRIS ====================
 function startTetris() {
   panel.style.display = 'flex';
   gameDiv.innerHTML = `
@@ -289,8 +245,7 @@ function startTetris() {
     }
   });
 }
-
-// ------------------- Mario -------------------
+// ==================== MARIO ====================
 function startMario() {
   panel.style.display = 'flex';
   gameDiv.innerHTML = `<div id="marioGame" style="width:100%;height:100%;"></div>`;
@@ -312,7 +267,8 @@ function loadGame() {
   }
 }
 
-// ------------------- Pong -------------------
+
+// ==================== PONG ====================
 function startPong() {
   panel.style.display = 'flex';
   gameDiv.innerHTML = `
@@ -445,63 +401,47 @@ function startPong() {
   game();
 }
 
-// ------------------- Fútbol 2D -------------------
-function startFutbol() {
+
+// ==================== FÚTBOL 2D ====================
+function startFutbol(){ 
   panel.style.display = 'flex';
-  gameDiv.innerHTML = `
-    <canvas id="futbolCanvas" width="900" height="560"></canvas>
-    <div style="position:absolute;top:20px;left:20px;color:#ffdd59;font-family:'Press Start 2P';">
-      IA: <select id="difficultyFutbol">
-        <option value="easy">Fácil</option>
-        <option value="medium" selected>Medio</option>
-        <option value="hard">Difícil</option>
-      </select>
-    </div>
-  `;
+  gameDiv.innerHTML = `<canvas id="futbolCanvas" width="900" height="560"></canvas>
+  <div style="position:absolute;top:20px;left:20px;color:#ffdd59;font-family:'Press Start 2P';">
+    IA: <select id="difficultyFutbol">
+      <option value="easy">Fácil</option>
+      <option value="medium" selected>Medio</option>
+      <option value="hard">Difícil</option>
+    </select>
+  </div>`;
 
   const canvas = document.getElementById("futbolCanvas");
   const ctx = canvas.getContext("2d");
-
   const keys = {};
-  let paused = false;
+  let paused=false;
+  document.addEventListener("keydown", e=> keys[e.key]=true);
+  document.addEventListener("keyup", e=> keys[e.key]=false);
 
-  document.addEventListener("keydown", e => keys[e.key] = true);
-  document.addEventListener("keyup", e => keys[e.key] = false);
-
-  const ball = {x:450,y:220,vx:5,vy:3,r:18};
-  const p1 = {x:640,y:240,w:48,h:48,score:0,color:'#66ccff',speed:4};
-  const p2 = {x:640,y:240,w:48,h:48,score:0,color:'#ff7777',speed:4}; // IA
-  const goalSize = 340;
-  const goalie1 = {x:10,y:280,w:12,h:60,speed:1.2};
-  const goalie2 = {x:878,y:280,w:12,h:60,speed:1.2};
-
-  let finished = false;
+  const ball={x:450,y:280,vx:5,vy:3,r:18};
+  const p1={x:260,y:240,w:48,h:48,score:0,color:'#66ccff',speed:4};
+  const p2={x:540,y:240,w:48,h:48,score:0,color:'#ff7777',speed:4}; // IA
+  const goalSize=340;
+  const goalie1={x:10,y:280,w:12,h:60,speed:1.2};
+  const goalie2={x:878,y:280,w:12,h:60,speed:1.2};
+  let finished=false;
 
   function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
-
-  function respawn() {
-    ball.x = 450; ball.y = 280;
-    ball.vx = (Math.random()>0.5?5:-5);
-    ball.vy = (Math.random()>0.5?3:-3);
-  }
-
-  function drawField() {
-    ctx.fillStyle='#083708';
-    ctx.fillRect(0,0,900,560);
-    for(let y=0;y<11;y++){
-      ctx.fillStyle = y%2 ? '#073306' : '#083708';
-      ctx.fillRect(0,y*50,900,25);
-    }
-    ctx.strokeStyle='white';
-    ctx.lineWidth=2;
+  function respawn(){ ball.x=450; ball.y=280; ball.vx=(Math.random()>0.5?5:-5); ball.vy=(Math.random()>0.5?3:-3); }
+  function drawField(){
+    ctx.fillStyle='#083708'; ctx.fillRect(0,0,900,560);
+    for(let y=0;y<11;y++){ ctx.fillStyle = y%2?'#073306':'#083708'; ctx.fillRect(0,y*50,900,25); }
+    ctx.strokeStyle='white'; ctx.lineWidth=2;
     ctx.strokeRect(0,0,900,560);
     ctx.beginPath(); ctx.moveTo(450,0); ctx.lineTo(450,560); ctx.stroke();
     ctx.beginPath(); ctx.arc(450,280,80,0,2*Math.PI); ctx.stroke();
-    ctx.strokeRect(0,(560-goalSize)/2,18,goalSize); 
+    ctx.strokeRect(0,(560-goalSize)/2,18,goalSize);
     ctx.strokeRect(882,(560-goalSize)/2,18,goalSize);
   }
-
-  function draw() {
+  function draw(){
     drawField();
     ctx.fillStyle='#cccccc';
     ctx.fillRect(goalie1.x,goalie1.y-goalie1.h/2,goalie1.w,goalie1.h);
@@ -509,97 +449,102 @@ function startFutbol() {
     ctx.fillStyle=p1.color; ctx.fillRect(p1.x,p1.y,p1.w,p1.h);
     ctx.fillStyle=p2.color; ctx.fillRect(p2.x,p2.y,p2.w,p2.h);
     ctx.fillStyle='white'; ctx.beginPath(); ctx.arc(ball.x,ball.y,ball.r,0,2*Math.PI); ctx.fill();
-    ctx.fillStyle='#7CFC00'; ctx.font='18px monospace'; 
-    ctx.fillText(`P1: ${p1.score}   P2: ${p2.score}`, 380, 28);
-    ctx.fillStyle='white'; ctx.font='12px monospace'; 
-    ctx.fillText('ESC pausa',12,548);
+    ctx.fillStyle='#7CFC00'; ctx.font='18px monospace';
+    ctx.fillText(`P1: ${p1.score}   P2: ${p2.score}`,380,28);
+    ctx.fillStyle='white'; ctx.font='12px monospace'; ctx.fillText('ESC pausa',12,548);
   }
-
-  function endGame(winner){
-    finished = true;
-    alert(winner ? (winner==='p1'?'Ganó P1':'Ganó IA') : 'Empate');
-  }
-
-  function update() {
-    if(paused || finished) return;
-
+  function endGame(winner){ finished=true; alert(winner==='p1'?'Ganó P1':'Ganó IA'); }
+  function update(){
+    if(paused||finished) return;
     // Controles P1
-    if(keys['w']) p1.y = clamp(p1.y-p1.speed,0,560-p1.h);
-    if(keys['s']) p1.y = clamp(p1.y+p1.speed,0,560-p1.h);
-    if(keys['a']) p1.x = clamp(p1.x-p1.speed,0,900-p1.w);
-    if(keys['d']) p1.x = clamp(p1.x+p1.speed,0,900-p1.w);
+    if(keys['w']) p1.y=clamp(p1.y-p1.speed,0,560-p1.h);
+    if(keys['s']) p1.y=clamp(p1.y+p1.speed,0,560-p1.h);
+    if(keys['a']) p1.x=clamp(p1.x-p1.speed,0,900-p1.w);
+    if(keys['d']) p1.x=clamp(p1.x+p1.speed,0,900-p1.w);
 
     // IA P2
-    const diffMode = document.getElementById("difficultyFutbol").value;
+    const diffMode=document.getElementById("difficultyFutbol").value;
     let react=diffMode==='easy'?0.02:diffMode==='medium'?0.05:0.1;
-    let speed = diffMode==='easy'?3:diffMode==='medium'?4:6;
-
-    const targetX = ball.x - p2.x - p2.w/2;
-    const targetY = ball.y - p2.y - p2.h/2;
-
-    p2.x += clamp(targetX*react,-speed,speed);
-    p2.y += clamp(targetY*react,-speed,speed);
-    p2.x = clamp(p2.x,0,900-p2.w);
-    p2.y = clamp(p2.y,0,560-p2.h);
+    let speed=diffMode==='easy'?3:diffMode==='medium'?4:6;
+    let targetX=ball.x-p2.x-p2.w/2;
+    let targetY=ball.y-p2.y-p2.h/2;
+    p2.x+=clamp(targetX*react,-speed,speed);
+    p2.y+=clamp(targetY*react,-speed,speed);
+    p2.x=clamp(p2.x,0,900-p2.w);
+    p2.y=clamp(p2.y,0,560-p2.h);
 
     // Movimiento pelota
-    ball.x += ball.vx; ball.y += ball.vy;
+    ball.x+=ball.vx; ball.y+=ball.vy;
     if(ball.y-ball.r<0){ ball.y=ball.r; ball.vy*=-1; }
     if(ball.y+ball.r>560){ ball.y=560-ball.r; ball.vy*=-1; }
 
     // Gol
-    if(ball.x-ball.r<=0){
-      if(ball.y>(560-goalSize)/2 && ball.y<(560+goalSize)/2){ p2.score++; respawn(); } 
-      else { ball.x=ball.r; ball.vx*=-1; }
-    }
-    if(ball.x+ball.r>=900){
-      if(ball.y>(560-goalSize)/2 && ball.y<(560+goalSize)/2){ p1.score++; respawn(); } 
-      else { ball.x=900-ball.r; ball.vx*=-1; }
-    }
+    if(ball.x-ball.r<=0){ if(ball.y>(560-goalSize)/2 && ball.y<(560+goalSize)/2){ p2.score++; respawn(); } else{ ball.x=ball.r; ball.vx*=-1; } }
+    if(ball.x+ball.r>=900){ if(ball.y>(560-goalSize)/2 && ball.y<(560+goalSize)/2){ p1.score++; respawn(); } else{ ball.x=900-ball.r; ball.vx*=-1; } }
 
     // Colisiones jugadores
     [p1,p2].forEach(p=>{
-      const cx=p.x+p.w/2, cy=p.y+p.h/2;
-      const dx=ball.x-cx, dy=ball.y-cy;
+      const dx=ball.x-(p.x+p.w/2);
+      const dy=ball.y-(p.y+p.h/2);
       const dist=Math.hypot(dx,dy);
-      const minDist=ball.r + Math.max(p.w,p.h)/2;
-      if(dist<minDist){
-        const angle=Math.atan2(dy,dx);
-        const speed=Math.max(6,Math.hypot(ball.vx,ball.vy));
-        ball.vx = Math.cos(angle)*speed; ball.vy = Math.sin(angle)*speed;
-        ball.x = cx + Math.cos(angle)*(minDist+1); 
-        ball.y = cy + Math.sin(angle)*(minDist+1);
-      }
+      const minDist=ball.r+Math.max(p.w,p.h)/2;
+      if(dist<minDist){ const angle=Math.atan2(dy,dx); const speed=Math.max(6,Math.hypot(ball.vx,ball.vy)); ball.vx=Math.cos(angle)*speed; ball.vy=Math.sin(angle)*speed; ball.x=p.x+p.w/2+Math.cos(angle)*(minDist+1); ball.y=p.y+p.h/2+Math.sin(angle)*(minDist+1); }
     });
 
-    // Porteros simples
-    if(ball.x<380){ if(Math.abs(goalie1.y-ball.y)>4) goalie1.y += (ball.y>goalie1.y?goalie1.speed:-goalie1.speed); } 
-    else { const c=280; if(Math.abs(goalie1.y-c)>1) goalie1.y+=(c>goalie1.y?0.6:-0.6); }
-
-    if(ball.x>520){ if(Math.abs(goalie2.y-ball.y)>4) goalie2.y += (ball.y>goalie2.y?goalie2.speed:-goalie2.speed); } 
-    else { const c=280; if(Math.abs(goalie2.y-c)>1) goalie2.y+=(c>goalie2.y?0.6:-0.6); }
-
-    // Hitbox porteros
-    const g1 = {x:goalie1.x,y:goalie1.y-goalie1.h/2,w:goalie1.w,h:goalie1.h};
-    const g2 = {x:goalie2.x,y:goalie2.y-goalie2.h/2,w:goalie2.w,h:goalie2.h};
-    if(ball.x-ball.r<g1.x+g1.w && ball.y>g1.y && ball.y<g1.y+g1.h){ ball.x=g1.x+g1.w+ball.r; ball.vx=Math.abs(ball.vx); }
-    if(ball.x+ball.r>g2.x && ball.y>g2.y && ball.y<g2.y+g2.h){ ball.x=g2.x-ball.r; ball.vx=-Math.abs(ball.vx); }
-
-    if(p1.score>=5 || p2.score>=5){ endGame(p1.score>p2.score?'p1':'p2'); }
+    if(p1.score>=5) endGame('p1'); if(p2.score>=5) endGame('p2');
   }
+  function loop(){ update(); draw(); requestAnimationFrame(loop); }
+  respawn(); loop();
+}
 
-  function loop(){
-    update();
-    draw();
-    requestAnimationFrame(loop);
+// ==================== FLAPPY BIRD ====================
+function startFlappy() {
+  panel.style.display='flex';
+  gameDiv.innerHTML=`<canvas id="flappyCanvas" width="480" height="640"></canvas>
+  <div style="position:absolute;top:20px;left:20px;color:#ffdd59;font-family:'Press Start 2P';">Score: <span id="fbScore">0</span></div>
+  <div style="position:absolute;top:50px;left:20px;color:#ffdd59;font-family:'Press Start 2P';">Record: <span id="fbRecord">0</span></div>`;
+
+  const canvas=document.getElementById("flappyCanvas");
+  const ctx=canvas.getContext("2d");
+  let bird={x:100,y:320,radius:16,vy:0,wing:0};
+  const pipes=[];
+  let pipeSpeed=2, pipeGap=160, frame=0, score=0;
+  const particles=[];
+  const clouds=[{x:50,y:80,w:80,h:50,speed:0.3},{x:200,y:120,w:100,h:60,speed:0.2},{x:400,y:60,w:120,h:70,speed:0.25}];
+  const gravity=0.5, lift=-10;
+  let record=localStorage.getItem("flappyRecord")||0;
+  document.addEventListener("keydown",()=>{ bird.vy=lift; });
+
+  function spawnPipe(){ let topHeight=50+Math.random()*250; pipes.push({x:canvas.width,y:0,w:60,h:topHeight,passed:false}); pipes.push({x:canvas.width,y:topHeight+pipeGap,w:60,h:canvas.height-topHeight-pipeGap,passed:false}); }
+  function createParticles(x,y,color){ for(let i=0;i<10;i++){ particles.push({x:x,y:y,vx:(Math.random()-0.5)*4,vy:(Math.random()-2)*4,alpha:1,size:Math.random()*3+2,color:color}); } }
+  function update(){
+    bird.vy+=gravity; bird.y+=bird.vy; bird.wing=Math.sin(frame*0.3)*10;
+    if(frame%90===0) spawnPipe();
+    for(let p of pipes) p.x-=pipeSpeed;
+    for(let i=pipes.length-1;i>=0;i--) if(pipes[i].x+pipes[i].w<0) pipes.splice(i,1);
+    for(let c of clouds){ c.x-=c.speed; if(c.x+c.w<0) c.x=canvas.width+Math.random()*100; }
+    for(let p of pipes){ if(bird.x+bird.radius>p.x && bird.x-bird.radius<p.x+p.w && bird.y+bird.radius>p.y && bird.y-bird.radius<p.y+p.h){ createParticles(bird.x,bird.y,"#ffdd59"); respawn(); } }
+    if(bird.y+bird.radius>canvas.height-20 || bird.y-bird.radius<0){ createParticles(bird.x,bird.y,"#ffdd59"); respawn(); }
+    for(let i=0;i<pipes.length;i+=2){ if(bird.x>pipes[i].x+pipes[i].w && !pipes[i].passed){ score++; pipes[i].passed=true; createParticles(bird.x,bird.y,"#00ffff"); if(score%5===0){ pipeSpeed+=0.2; pipeGap-=5; } if(score>record){ record=score; localStorage.setItem("flappyRecord",score); }} }
+    for(let i=particles.length-1;i>=0;i--){ let p=particles[i]; p.x+=p.vx; p.y+=p.vy; p.alpha-=0.03; if(p.alpha<=0) particles.splice(i,1); }
+    frame++; document.getElementById("fbScore").innerText=score; document.getElementById("fbRecord").innerText=record;
   }
-
-  respawn();
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="#80dfff"; ctx.fillRect(0,0,canvas.width,canvas.height);
+    for(let c of clouds){ ctx.fillStyle="rgba(255,255,255,0.7)"; ctx.beginPath(); ctx.ellipse(c.x,c.y,c.w,c.h,0,0,2*Math.PI); ctx.fill(); }
+    for(let i=0;i<pipes.length;i+=2){ let top=pipes[i],bottom=pipes[i+1]; ctx.fillStyle="#00aa00"; ctx.fillRect(top.x,top.y,top.w,top.h); ctx.fillStyle="#007700"; ctx.fillRect(top.x,top.h-10,top.w,10); ctx.fillStyle="#00aa00"; ctx.fillRect(bottom.x,bottom.y,bottom.w,bottom.h); ctx.fillStyle="#007700"; ctx.fillRect(bottom.x,bottom.y,bottom.w,10); }
+    for(let p of particles){ ctx.fillStyle=`rgba(${hexToRgb(p.color)},${p.alpha})`; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,2*Math.PI); ctx.fill(); }
+    ctx.fillStyle="#ffdd59"; ctx.beginPath(); ctx.arc(bird.x,bird.y,bird.radius,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle="#ffaa00"; ctx.beginPath(); ctx.moveTo(bird.x,bird.y); ctx.lineTo(bird.x-bird.radius,bird.y-bird.wing); ctx.lineTo(bird.x-bird.radius,bird.y+bird.wing); ctx.closePath(); ctx.fill();
+    ctx.fillStyle="#007700"; ctx.fillRect(0,canvas.height-20,canvas.width,20);
+  }
+  function respawn(){ bird.y=320; bird.vy=0; pipes.length=0; frame=0; score=0; pipeSpeed=2; pipeGap=160; particles.length=0; }
+  function hexToRgb(hex){ hex=hex.replace("#",""); let bigint=parseInt(hex,16); let r=(bigint>>16)&255; let g=(bigint>>8)&255; let b=bigint&255; return `${r},${g},${b}`; }
+  function loop(){ update(); draw(); requestAnimationFrame(loop); }
   loop();
 }
 </script>
 
 </body>
 </html>
-
-
