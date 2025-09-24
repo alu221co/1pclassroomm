@@ -136,6 +136,9 @@
   <div class="game-card" onclick="startPong()">
     <h3>🏓 Pong</h3>
   </div>
+  <div class="game-card" onclick="startFutbol()">
+    <h3>⚽ Fútbol 2D</h3>
+  </div>
 </div>
 
 <div id="gamePanel" style="display:none;">
@@ -169,18 +172,18 @@ function startTetris() {
   let current = null;
   let score = 0;
   let dropCounter = 0;
-  let dropInterval = 400; // velocidad inicial
+  let dropInterval = 400;
   let lastTime = 0;
 
   const colors = ['cyan','blue','orange','yellow','green','purple','red'];
   const pieces = [
-    [[1,1,1,1]],           // I
-    [[1,0,0],[1,1,1]],     // J
-    [[0,0,1],[1,1,1]],     // L
-    [[1,1],[1,1]],         // O
-    [[0,1,1],[1,1,0]],     // S
-    [[0,1,0],[1,1,1]],     // T
-    [[1,1,0],[0,1,1]]      // Z
+    [[1,1,1,1]],
+    [[1,0,0],[1,1,1]],
+    [[0,0,1],[1,1,1]],
+    [[1,1],[1,1]],
+    [[0,1,1],[1,1,0]],
+    [[0,1,0],[1,1,1]],
+    [[1,1,0],[0,1,1]]
   ];
 
   function randomPiece() {
@@ -196,7 +199,6 @@ function startTetris() {
   function drawBoard() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // Cuadrícula
     ctx.strokeStyle = "#222"; 
     ctx.lineWidth = 1;
     for (let x = 0; x <= cols; x++) {
@@ -212,12 +214,10 @@ function startTetris() {
       ctx.stroke();
     }
 
-    // Piezas fijas
     for(let y=0;y<rows;y++)
       for(let x=0;x<cols;x++)
         if(board[y][x]) drawBlock(x,y,board[y][x]);
 
-    // Pieza actual
     if(current) {
       current.shape.forEach((row,dy)=> row.forEach((val,dx)=>{
         if(val) drawBlock(current.x+dx, current.y+dy, current.color);
@@ -250,9 +250,7 @@ function startTetris() {
     }
     score += lines*100;
     document.getElementById('score').innerText = score;
-    if(lines > 0 && dropInterval > 100) {
-      dropInterval -= 20; // aumenta velocidad progresivamente
-    }
+    if(lines > 0 && dropInterval > 100) dropInterval -= 20;
   }
 
   function drop() {
@@ -315,8 +313,6 @@ function loadGame() {
 }
 
 // ------------------- Pong -------------------
-
-
 function startPong() {
   panel.style.display = 'flex';
   gameDiv.innerHTML = `
@@ -398,21 +394,18 @@ function startPong() {
 
   function getDifficulty() {
     const mode = document.getElementById("difficulty").value;
-    if(mode==="easy") return {react:0.05, speed:4};   // lenta, falla mucho
-    if(mode==="medium") return {react:0.1, speed:6};  // intermedia
-    if(mode==="hard") return {react:0.18, speed:9};   // muy rápida
+    if(mode==="easy") return {react:0.05, speed:4};
+    if(mode==="medium") return {react:0.1, speed:6};
+    if(mode==="hard") return {react:0.18, speed:9};
   }
 
   function update() {
     if(upPressed && player.y>0) player.y-=6;
     if(downPressed && player.y<canvas.height-paddleHeight) player.y+=6;
 
-    // IA mejorada
     let diff = getDifficulty();
     let targetY = ball.y - (ai.y + paddleHeight/2);
-    if(Math.abs(targetY) > 10) {
-      ai.y += Math.sign(targetY) * Math.min(diff.speed, Math.abs(targetY) * diff.react);
-    }
+    if(Math.abs(targetY) > 10) ai.y += Math.sign(targetY) * Math.min(diff.speed, Math.abs(targetY) * diff.react);
 
     ball.x += ball.speedX;
     ball.y += ball.speedY;
@@ -452,8 +445,161 @@ function startPong() {
   game();
 }
 
+// ------------------- Fútbol 2D -------------------
+function startFutbol() {
+  panel.style.display = 'flex';
+  gameDiv.innerHTML = `
+    <canvas id="futbolCanvas" width="900" height="560"></canvas>
+    <div style="position:absolute;top:20px;left:20px;color:#ffdd59;font-family:'Press Start 2P';">
+      IA: <select id="difficultyFutbol">
+        <option value="easy">Fácil</option>
+        <option value="medium" selected>Medio</option>
+        <option value="hard">Difícil</option>
+      </select>
+    </div>
+  `;
+
+  const canvas = document.getElementById("futbolCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const keys = {};
+  let paused = false;
+
+  document.addEventListener("keydown", e => keys[e.key] = true);
+  document.addEventListener("keyup", e => keys[e.key] = false);
+
+  const ball = {x:450,y:280,vx:5,vy:3,r:18};
+  const p1 = {x:260,y:240,w:48,h:48,score:0,color:'#66ccff',speed:4};
+  const p2 = {x:540,y:240,w:48,h:48,score:0,color:'#ff7777',speed:4}; // IA
+  const goalSize = 340;
+  const goalie1 = {x:10,y:280,w:12,h:60,speed:1.2};
+  const goalie2 = {x:878,y:280,w:12,h:60,speed:1.2};
+
+  let finished = false;
+
+  function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+
+  function respawn() {
+    ball.x = 450; ball.y = 280;
+    ball.vx = (Math.random()>0.5?5:-5);
+    ball.vy = (Math.random()>0.5?3:-3);
+  }
+
+  function drawField() {
+    ctx.fillStyle='#083708';
+    ctx.fillRect(0,0,900,560);
+    for(let y=0;y<11;y++){
+      ctx.fillStyle = y%2 ? '#073306' : '#083708';
+      ctx.fillRect(0,y*50,900,25);
+    }
+    ctx.strokeStyle='white';
+    ctx.lineWidth=2;
+    ctx.strokeRect(0,0,900,560);
+    ctx.beginPath(); ctx.moveTo(450,0); ctx.lineTo(450,560); ctx.stroke();
+    ctx.beginPath(); ctx.arc(450,280,80,0,2*Math.PI); ctx.stroke();
+    ctx.strokeRect(0,(560-goalSize)/2,18,goalSize); 
+    ctx.strokeRect(882,(560-goalSize)/2,18,goalSize);
+  }
+
+  function draw() {
+    drawField();
+    ctx.fillStyle='#cccccc';
+    ctx.fillRect(goalie1.x,goalie1.y-goalie1.h/2,goalie1.w,goalie1.h);
+    ctx.fillRect(goalie2.x,goalie2.y-goalie2.h/2,goalie2.w,goalie2.h);
+    ctx.fillStyle=p1.color; ctx.fillRect(p1.x,p1.y,p1.w,p1.h);
+    ctx.fillStyle=p2.color; ctx.fillRect(p2.x,p2.y,p2.w,p2.h);
+    ctx.fillStyle='white'; ctx.beginPath(); ctx.arc(ball.x,ball.y,ball.r,0,2*Math.PI); ctx.fill();
+    ctx.fillStyle='#7CFC00'; ctx.font='18px monospace'; 
+    ctx.fillText(`P1: ${p1.score}   P2: ${p2.score}`, 380, 28);
+    ctx.fillStyle='white'; ctx.font='12px monospace'; 
+    ctx.fillText('ESC pausa',12,548);
+  }
+
+  function endGame(winner){
+    finished = true;
+    alert(winner ? (winner==='p1'?'Ganó P1':'Ganó IA') : 'Empate');
+  }
+
+  function update() {
+    if(paused || finished) return;
+
+    // Controles P1
+    if(keys['w']) p1.y = clamp(p1.y-p1.speed,0,560-p1.h);
+    if(keys['s']) p1.y = clamp(p1.y+p1.speed,0,560-p1.h);
+    if(keys['a']) p1.x = clamp(p1.x-p1.speed,0,900-p1.w);
+    if(keys['d']) p1.x = clamp(p1.x+p1.speed,0,900-p1.w);
+
+    // IA P2
+    const diffMode = document.getElementById("difficultyFutbol").value;
+    let react=diffMode==='easy'?0.02:diffMode==='medium'?0.05:0.1;
+    let speed = diffMode==='easy'?3:diffMode==='medium'?4:6;
+
+    const targetX = ball.x - p2.x - p2.w/2;
+    const targetY = ball.y - p2.y - p2.h/2;
+
+    p2.x += clamp(targetX*react,-speed,speed);
+    p2.y += clamp(targetY*react,-speed,speed);
+    p2.x = clamp(p2.x,0,900-p2.w);
+    p2.y = clamp(p2.y,0,560-p2.h);
+
+    // Movimiento pelota
+    ball.x += ball.vx; ball.y += ball.vy;
+    if(ball.y-ball.r<0){ ball.y=ball.r; ball.vy*=-1; }
+    if(ball.y+ball.r>560){ ball.y=560-ball.r; ball.vy*=-1; }
+
+    // Gol
+    if(ball.x-ball.r<=0){
+      if(ball.y>(560-goalSize)/2 && ball.y<(560+goalSize)/2){ p2.score++; respawn(); } 
+      else { ball.x=ball.r; ball.vx*=-1; }
+    }
+    if(ball.x+ball.r>=900){
+      if(ball.y>(560-goalSize)/2 && ball.y<(560+goalSize)/2){ p1.score++; respawn(); } 
+      else { ball.x=900-ball.r; ball.vx*=-1; }
+    }
+
+    // Colisiones jugadores
+    [p1,p2].forEach(p=>{
+      const cx=p.x+p.w/2, cy=p.y+p.h/2;
+      const dx=ball.x-cx, dy=ball.y-cy;
+      const dist=Math.hypot(dx,dy);
+      const minDist=ball.r + Math.max(p.w,p.h)/2;
+      if(dist<minDist){
+        const angle=Math.atan2(dy,dx);
+        const speed=Math.max(6,Math.hypot(ball.vx,ball.vy));
+        ball.vx = Math.cos(angle)*speed; ball.vy = Math.sin(angle)*speed;
+        ball.x = cx + Math.cos(angle)*(minDist+1); 
+        ball.y = cy + Math.sin(angle)*(minDist+1);
+      }
+    });
+
+    // Porteros simples
+    if(ball.x<380){ if(Math.abs(goalie1.y-ball.y)>4) goalie1.y += (ball.y>goalie1.y?goalie1.speed:-goalie1.speed); } 
+    else { const c=280; if(Math.abs(goalie1.y-c)>1) goalie1.y+=(c>goalie1.y?0.6:-0.6); }
+
+    if(ball.x>520){ if(Math.abs(goalie2.y-ball.y)>4) goalie2.y += (ball.y>goalie2.y?goalie2.speed:-goalie2.speed); } 
+    else { const c=280; if(Math.abs(goalie2.y-c)>1) goalie2.y+=(c>goalie2.y?0.6:-0.6); }
+
+    // Hitbox porteros
+    const g1 = {x:goalie1.x,y:goalie1.y-goalie1.h/2,w:goalie1.w,h:goalie1.h};
+    const g2 = {x:goalie2.x,y:goalie2.y-goalie2.h/2,w:goalie2.w,h:goalie2.h};
+    if(ball.x-ball.r<g1.x+g1.w && ball.y>g1.y && ball.y<g1.y+g1.h){ ball.x=g1.x+g1.w+ball.r; ball.vx=Math.abs(ball.vx); }
+    if(ball.x+ball.r>g2.x && ball.y>g2.y && ball.y<g2.y+g2.h){ ball.x=g2.x-ball.r; ball.vx=-Math.abs(ball.vx); }
+
+    if(p1.score>=5 || p2.score>=5){ endGame(p1.score>p2.score?'p1':'p2'); }
+  }
+
+  function loop(){
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  respawn();
+  loop();
+}
 </script>
 
 </body>
 </html>
+
 
