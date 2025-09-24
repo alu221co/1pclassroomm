@@ -112,8 +112,7 @@
     align-items: center;
   }
 
-  /* Canvas para Tetris centrado */
-  #tetrisCanvas {
+  #tetrisCanvas, #pongCanvas {
     border: 4px solid #ffdd59;
     background: #111;
     display: block;
@@ -132,7 +131,10 @@
     <h3>🟦 Tetris</h3>
   </div>
   <div class="game-card" onclick="startMario()">
-    <h3>🍄 Mariano Bros</h3>
+    <h3>🍄 Mario Bros</h3>
+  </div>
+  <div class="game-card" onclick="startPong()">
+    <h3>🏓 Pong</h3>
   </div>
 </div>
 
@@ -293,9 +295,7 @@ function startTetris() {
 // ------------------- Mario -------------------
 function startMario() {
   panel.style.display = 'flex';
-  gameDiv.innerHTML = `
-    <div id="marioGame" style="width:100%;height:100%;"></div>
-  `;
+  gameDiv.innerHTML = `<div id="marioGame" style="width:100%;height:100%;"></div>`;
   EJS_player = "#marioGame";
   EJS_core = "nes";
   EJS_color = "#000000";
@@ -313,7 +313,147 @@ function loadGame() {
     document.body.appendChild(script);
   }
 }
+
+// ------------------- Pong -------------------
+
+
+function startPong() {
+  panel.style.display = 'flex';
+  gameDiv.innerHTML = `
+    <canvas id="pongCanvas" width="800" height="500"></canvas>
+    <div style="position:absolute;top:20px;left:20px;color:#ffdd59;font-family:'Press Start 2P';">
+      IA: <select id="difficulty">
+        <option value="easy">Fácil</option>
+        <option value="medium" selected>Medio</option>
+        <option value="hard">Difícil</option>
+      </select>
+    </div>
+  `;
+
+  const canvas = document.getElementById("pongCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const paddleHeight = 90, paddleWidth = 12;
+  const player = { x: 20, y: canvas.height/2 - paddleHeight/2, score: 0 };
+  const ai = { x: canvas.width-32, y: canvas.height/2 - paddleHeight/2, score: 0 };
+  const ball = { x: canvas.width/2, y: canvas.height/2, r: 9, speedX: 0, speedY: 0 };
+
+  let upPressed = false, downPressed = false;
+
+  document.addEventListener("keydown", e => {
+    if(e.key==="ArrowUp") upPressed=true;
+    if(e.key==="ArrowDown") downPressed=true;
+  });
+  document.addEventListener("keyup", e => {
+    if(e.key==="ArrowUp") upPressed=false;
+    if(e.key==="ArrowDown") downPressed=false;
+  });
+
+  function resetBall() {
+    ball.x = canvas.width/2;
+    ball.y = canvas.height/2;
+    ball.speedX = (Math.random()>0.5?1:-1) * 2.5;
+    ball.speedY = (Math.random()>0.5?1:-1) * 2.5;
+  }
+
+  function drawRect(x,y,w,h,color) {
+    ctx.fillStyle=color;
+    ctx.fillRect(x,y,w,h);
+  }
+
+  function drawCircle(x,y,r,color) {
+    ctx.fillStyle=color;
+    ctx.beginPath();
+    ctx.arc(x,y,r,0,Math.PI*2,false);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function drawText(text,x,y,color) {
+    ctx.fillStyle=color;
+    ctx.font="28px 'Press Start 2P'";
+    ctx.shadowColor = "#ffdd59";
+    ctx.shadowBlur = 15;
+    ctx.fillText(text,x,y);
+    ctx.shadowBlur = 0;
+  }
+
+  function drawNet() {
+    ctx.strokeStyle="#333";
+    ctx.lineWidth=2;
+    for(let i=0;i<=canvas.height;i+=15){
+      ctx.beginPath();
+      ctx.moveTo(canvas.width/2,i);
+      ctx.lineTo(canvas.width/2,i+10);
+      ctx.stroke();
+    }
+  }
+
+  function collision(b,p) {
+    return b.x - b.r < p.x + paddleWidth &&
+           b.x + b.r > p.x &&
+           b.y - b.r < p.y + paddleHeight &&
+           b.y + b.r > p.y;
+  }
+
+  function getDifficulty() {
+    const mode = document.getElementById("difficulty").value;
+    if(mode==="easy") return {react:0.05, speed:4};   // lenta, falla mucho
+    if(mode==="medium") return {react:0.1, speed:6};  // intermedia
+    if(mode==="hard") return {react:0.18, speed:9};   // muy rápida
+  }
+
+  function update() {
+    if(upPressed && player.y>0) player.y-=6;
+    if(downPressed && player.y<canvas.height-paddleHeight) player.y+=6;
+
+    // IA mejorada
+    let diff = getDifficulty();
+    let targetY = ball.y - (ai.y + paddleHeight/2);
+    if(Math.abs(targetY) > 10) {
+      ai.y += Math.sign(targetY) * Math.min(diff.speed, Math.abs(targetY) * diff.react);
+    }
+
+    ball.x += ball.speedX;
+    ball.y += ball.speedY;
+
+    if(ball.y+ball.r>canvas.height || ball.y-ball.r<0) ball.speedY*=-1;
+
+    let paddle = (ball.x<canvas.width/2)?player:ai;
+    if(collision(ball,paddle)){
+      let collidePoint = (ball.y - (paddle.y + paddleHeight/2)) / (paddleHeight/2);
+      let angleRad = (Math.PI/4) * collidePoint;
+      let direction = (ball.x<canvas.width/2)?1:-1;
+      let speed = Math.sqrt(ball.speedX**2 + ball.speedY**2) + 0.5;
+      ball.speedX = speed * Math.cos(angleRad) * direction;
+      ball.speedY = speed * Math.sin(angleRad);
+    }
+
+    if(ball.x-ball.r<0){ ai.score++; resetBall(); }
+    if(ball.x+ball.r>canvas.width){ player.score++; resetBall(); }
+  }
+
+  function render() {
+    drawRect(0,0,canvas.width,canvas.height,"#000");
+    drawNet();
+    drawText(player.score,canvas.width/4,60,"#ffdd59");
+    drawText(ai.score,3*canvas.width/4,60,"#ffdd59");
+    drawRect(player.x,player.y,paddleWidth,paddleHeight,"#fff");
+    drawRect(ai.x,ai.y,paddleWidth,paddleHeight,"#fff");
+    drawCircle(ball.x,ball.y,ball.r,"#ff416c");
+  }
+
+  function game(){
+    update();
+    render();
+    requestAnimationFrame(game);
+  }
+  resetBall();
+  game();
+}
+
 </script>
 
 </body>
 </html>
+
