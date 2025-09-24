@@ -3,34 +3,133 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ClassrooM</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<title>Classroom</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
 <style>
-body {
-  margin:0;
-  font-family: 'Press Start 2P', cursive;
-  background: linear-gradient(45deg,#1f4037,#99f2c8,#ff416c,#ff4b2b);
-  background-size: 400% 400%;
-  animation: bgAnim 15s ease infinite;
-  color:#fff;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-}
-@keyframes bgAnim {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-header {padding:20px;text-align:center;background: rgba(0,0,0,0.5);border-bottom:2px solid #ffdd59;box-shadow:0 5px 20px rgba(0,0,0,0.6);}
-header h1 {font-size:2.3em;color:#ffdd59;text-shadow:0 0 10px #fffb7d;}
-.games-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:25px;padding:40px;max-width:1200px;margin:auto;width:100%;}
-.game-card {background: rgba(255,255,255,0.08);border-radius:20px;padding:25px;text-align:center;backdrop-filter: blur(12px);box-shadow:0 6px 25px rgba(0,0,0,0.5);transition: transform 0.3s, box-shadow 0.3s;cursor:pointer;}
-.game-card:hover {transform: translateY(-8px);box-shadow: 0 12px 35px rgba(0,0,0,0.7), 0 0 15px #fffb7d;}
-.game-card img {width:80px;height:80px;margin-bottom:15px;object-fit:contain;transition: transform 0.3s;}
-.game-card:hover img {transform: scale(1.1);}
-.game-card h3 {font-size:1.4em;color:#ffdd59;margin-bottom:10px;text-shadow:0 0 6px #fffb7d;}
-#gamePanel {display:none;width:100%;height:100vh;background:#000;position:fixed;top:0;left:0;z-index:1000;flex-direction:column;justify-content:center;align-items:center;}
-#closeBtn {position:absolute;top:20px;right:20px;background:#ff416c;color:#fff;border:none;padding:10px 18px;font-size:16px;border-radius:8px;cursor:pointer;box-shadow:0 0 12px rgba(0,0,0,0.6);}
-canvas {background:#111;display:block;margin:auto;}
-#startButton {display:block;width:160px;height:40px;background-color:#4CAF50;color:white;text-align:center;font-size:16px;margin:20px auto;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-family:'Press Start 2P',cursive;box-shadow:0px 0px 10px 2px #000;}
-#tetrisScore {position:absolute;top:10px;left:10px;font-size:20px;color:#ffdd59;}
+  body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(45deg, #ff416c, #f88391ff, #2080b3ff, #99f2c8);
+    background-size: 400% 400%;
+    animation: bgAnim 20s ease infinite;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  @keyframes bgAnim {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  header {
+    padding: 20px;
+    text-align: center;
+    background: rgba(0,0,0,0.5);
+    border-bottom: 2px solid #ffdd59;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+  }
+
+  header h1 {
+    font-size: 2.3em;
+    color: #ffdd59;
+    text-shadow: 0 0 10px #fffb7d;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+    padding: 40px;
+    max-width: 1200px;
+    margin: auto;
+    width: 100%;
+  }
+
+  .game-card {
+    background: rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.5);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    font-family: 'Press Start 2P', cursive;
+  }
+
+  .game-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.7), 0 0 15px #fffb7d;
+  }
+
+  .game-card img {
+    width: 60px;
+    margin-bottom: 15px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    transition: transform 0.3s;
+  }
+
+  .game-card:hover img {
+    transform: scale(1.1);
+  }
+
+  .game-card h3 {
+    font-size: 1.2em;
+    color: #ffdd59;
+    margin-bottom: 10px;
+    text-shadow: 0 0 6px #fffb7d;
+  }
+
+  #gamePanel {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 1000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #closeBtn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #ff416c;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(0,0,0,0.6);
+  }
+
+  #game {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Canvas para Tetris centrado */
+  #tetrisCanvas {
+    border: 4px solid #ffdd59;
+    background: #111;
+    display: block;
+    margin: 0 auto;
+  }
 </style>
 </head>
 <body>
@@ -40,178 +139,178 @@ canvas {background:#111;display:block;margin:auto;}
 </header>
 
 <div class="games-grid">
-  <div class="game-card" onclick="openGame('tetris')">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Tetris-logo.png" alt="Tetris">
-    <h3>Tetris</h3>
+  <div class="game-card" onclick="startTetris()">
+    <h3>🟦 Tetris</h3>
   </div>
-  <div class="game-card" onclick="openGame('mario')">
-    <img src="https://upload.wikimedia.org/wikipedia/en/0/03/Mario_Bros._cover.jpg" alt="Mario Bros">
-    <h3>Mario Bros</h3>
+  <div class="game-card" onclick="startMario()">
+    <h3>🍄 Mario Bros</h3>
   </div>
 </div>
 
-<div id="gamePanel">
+<div id="gamePanel" style="display:none;">
   <button id="closeBtn" onclick="closeGame()">Cerrar</button>
-  <div id="game" style="width:100%; height:100%; position:relative;"></div>
+  <div id="game"></div>
 </div>
 
 <script>
-let tetrisInstance;
+const gameDiv = document.getElementById('game');
+const panel = document.getElementById('gamePanel');
 
-function openGame(name){
-  const panel=document.getElementById('gamePanel');
-  const gameDiv=document.getElementById('game');
-  gameDiv.innerHTML='';
-  panel.style.display='flex';
-
-  if(name==='tetris'){
-    const canvas=document.createElement('canvas');
-    canvas.width=300; canvas.height=600;
-    gameDiv.appendChild(canvas);
-
-    const scoreDisplay=document.createElement('div');
-    scoreDisplay.id='tetrisScore';
-    scoreDisplay.innerText='Score: 0';
-    gameDiv.appendChild(scoreDisplay);
-
-    initTetris(canvas,scoreDisplay);
-  } 
-  else if(name==='mario'){
-    const wrapper=document.createElement('div');
-    wrapper.style.width='100%'; wrapper.style.height='100%'; wrapper.style.position='relative';
-    const startBtn=document.createElement('button');
-    startBtn.id='startButton';
-    startBtn.innerText='PLAY';
-    wrapper.appendChild(startBtn);
-    const marioDiv=document.createElement('div');
-    marioDiv.id='marioGame';
-    marioDiv.style.width='100%';
-    marioDiv.style.height='100%';
-    wrapper.appendChild(marioDiv);
-    gameDiv.appendChild(wrapper);
-
-    startBtn.addEventListener('click',()=>{
-      marioDiv.style.display='block';
-      startBtn.style.display='none';
-      window.EJS_player = "#marioGame";
-      window.EJS_core = "nes";
-      window.EJS_color = "#000000";
-      window.EJS_startOnLoaded = true;
-      window.EJS_pathtodata = "https://cdn.jsdelivr.net/gh/a456pur/seraph@81f551ca0aa8e3d6018d32d8ac5904ac9bc78f76/storage/emulatorjs/data";
-      window.EJS_gameUrl = "https://cdn.jsdelivr.net/gh/bubbls/UGS-file-encryption@e0c78a58432c6486ebe1a50a78d263df65809a83/Super%20Mario%20Bros.%20(Europe).zip";
-      loadMario();
-    });
-
-    function loadMario(){
-      const script1=document.createElement('script');
-      script1.src="https://cdn.jsdelivr.net/gh/a456pur/seraph@81f551ca0aa8e3d6018d32d8ac5904ac9bc78f76/storage/emulatorjs/data/loader.js";
-      document.body.appendChild(script1);
-      const script2=document.createElement('script');
-      script2.src="https://cdn.jsdelivr.net/gh/a456pur/seraph@ae2fcc6d6a9cd051654fcc0519080db1f79cf2a7/storage/js/cloak.js";
-      document.body.appendChild(script2);
-    }
-  }
+function closeGame() {
+  gameDiv.innerHTML = '';
+  panel.style.display = 'none';
 }
 
-function closeGame(){
-  document.getElementById('gamePanel').style.display='none';
-  document.getElementById('game').innerHTML='';
-  if(tetrisInstance && tetrisInstance.stop) tetrisInstance.stop();
-}
+// ------------------- Tetris -------------------
+function startTetris() {
+  panel.style.display = 'flex';
+  gameDiv.innerHTML = `
+    <canvas id="tetrisCanvas" width="300" height="600"></canvas>
+    <div style="position:absolute;top:20px;left:20px;color:#ffdd59;font-family:'Press Start 2P';">Score: <span id="score">0</span></div>
+  `;
 
-// ------------------ TETRIS ------------------
-function initTetris(canvas,scoreDiv){
-  const ctx=canvas.getContext('2d');
-  const nx=10, ny=20;
-  const dx=canvas.width/nx, dy=canvas.height/ny;
-  const pieces=[
-    {size:4,blocks:[0x0F00,0x2222,0x00F0,0x4444],color:'cyan'},
-    {size:3,blocks:[0x44C0,0x8E00,0x6440,0x0E20],color:'blue'},
-    {size:3,blocks:[0x4460,0x0E80,0xC440,0x2E00],color:'orange'},
-    {size:2,blocks:[0xCC00,0xCC00,0xCC00,0xCC00],color:'yellow'},
-    {size:3,blocks:[0x06C0,0x8C40,0x6C00,0x4620],color:'green'},
-    {size:3,blocks:[0x0E40,0x4C40,0x4E00,0x4640],color:'purple'},
-    {size:3,blocks:[0x0C60,0x4C80,0xC600,0x2640],color:'red'}
+  const canvas = document.getElementById('tetrisCanvas');
+  const ctx = canvas.getContext('2d');
+  const cols = 10;
+  const rows = 20;
+  const blockSize = canvas.width / cols;
+  let board = Array.from({length: rows}, ()=> Array(cols).fill(0));
+  let current = null;
+  let score = 0;
+  const colors = ['cyan','blue','orange','yellow','green','purple','red'];
+  const pieces = [
+    [[1,1,1,1]],           // I
+    [[1,0,0],[1,1,1]],     // J
+    [[0,0,1],[1,1,1]],     // L
+    [[1,1],[1,1]],         // O
+    [[0,1,1],[1,1,0]],     // S
+    [[0,1,0],[1,1,1]],     // T
+    [[1,1,0],[0,1,1]]      // Z
   ];
 
-  let board=Array(ny).fill().map(()=>Array(nx).fill(0));
-  let current=randomPiece(), next=randomPiece(), playing=true, dropCounter=0, score=0;
-  let lastTime=0;
+  function randomPiece() {
+    const id = Math.floor(Math.random()*pieces.length);
+    return {shape: pieces[id], color: colors[id], x: Math.floor(cols/2)-1, y:0};
+  }
 
-  function eachblock(type,x,y,dir,fn){
-    let bit,row=0,col=0,blocks=type.blocks[dir];
-    for(bit=0x8000;bit>0;bit>>=1){
-      if(blocks&bit) fn(x+col,y+row);
-      if(++col===4){col=0;row++;}
+  function drawBlock(x,y,color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(x*blockSize, y*blockSize, blockSize-1, blockSize-1);
+  }
+
+  function drawBoard() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    // 🔹 Fondo cuadriculado
+    ctx.strokeStyle = "#222"; 
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= cols; x++) {
+      ctx.beginPath();
+      ctx.moveTo(x * blockSize, 0);
+      ctx.lineTo(x * blockSize, canvas.height);
+      ctx.stroke();
+    }
+    for (let y = 0; y <= rows; y++) {
+      ctx.beginPath();
+      ctx.moveTo(0, y * blockSize);
+      ctx.lineTo(canvas.width, y * blockSize);
+      ctx.stroke();
+    }
+
+    // Piezas fijas
+    for(let y=0;y<rows;y++)
+      for(let x=0;x<cols;x++)
+        if(board[y][x]) drawBlock(x,y,board[y][x]);
+
+    // Pieza actual
+    if(current) {
+      current.shape.forEach((row,dy)=> row.forEach((val,dx)=>{
+        if(val) drawBlock(current.x+dx, current.y+dy, current.color);
+      }));
     }
   }
 
-  function occupied(type,x,y,dir){
-    let res=false;
-    eachblock(type,x,y,dir,(xx,yy)=>{if(xx<0||xx>=nx||yy<0||yy>=ny||board[yy][xx]) res=true;});
-    return res;
+  function collide(nx,ny,shape) {
+    return shape.some((row,dy)=> row.some((val,dx)=>{
+      let x = nx+dx, y=ny+dy;
+      return val && (x<0 || x>=cols || y>=rows || board[y][x]);
+    }));
   }
 
-  function place(piece){
-    eachblock(piece.type,piece.x,piece.y,piece.dir,(x,y)=>{board[y][x]=piece.type.color;});
-    // aumentar puntaje por fila
-    for(let y0=ny-1;y0>=0;y0--){
-      if(board[y0].every(c=>c!==0)){
-        board.splice(y0,1);
-        board.unshift(Array(nx).fill(0));
-        score+=100;
+  function merge() {
+    current.shape.forEach((row,dy)=> row.forEach((val,dx)=>{
+      if(val) board[current.y+dy][current.x+dx] = current.color;
+    }));
+  }
+
+  function sweep() {
+    let lines = 0;
+    outer: for(let y=rows-1;y>=0;y--) {
+      if(board[y].every(val=>val)) {
+        board.splice(y,1);
+        board.unshift(Array(cols).fill(0));
+        lines++;
+        y++;
       }
     }
-    scoreDiv.innerText='Score: '+score;
+    score += lines*100;
+    document.getElementById('score').innerText = score;
   }
 
-  function draw(){
-    ctx.fillStyle="#111"; ctx.fillRect(0,0,canvas.width,canvas.height);
-    for(let y=0;y<ny;y++)
-      for(let x=0;x<nx;x++)
-        if(board[y][x]){ctx.fillStyle=board[y][x]; ctx.fillRect(x*dx,y*dy,dx-1,dy-1);}
-    eachblock(current.type,current.x,current.y,current.dir,(x,y)=>{
-      ctx.fillStyle=current.type.color; ctx.fillRect(x*dx,y*dy,dx-1,dy-1);
-    });
-  }
-
-  function update(time=0){
-    const dt=(time-lastTime)/1000; lastTime=time;
-    dropCounter+=dt;
-    if(dropCounter>0.6){
-      drop(); dropCounter=0;
+  function drop() {
+    if(!current) current = randomPiece();
+    if(!collide(current.x,current.y+1,current.shape)) {
+      current.y++;
+    } else {
+      merge();
+      if(current.y<=0) { alert('Game Over'); current=null; board = Array.from({length: rows}, ()=> Array(cols).fill(0)); score=0; document.getElementById('score').innerText = score; return; }
+      sweep();
+      current = randomPiece();
     }
-    if(playing) requestAnimationFrame(update);
-    draw();
+    drawBoard();
   }
 
-  function drop(){
-    if(!occupied(current.type,current.x,current.y+1,current.dir)) current.y++;
-    else {place(current); current=next; next=randomPiece();}
-  }
+  // 🔹 Reducido de 500ms a 300ms
+  setInterval(drop,300);
 
-  function move(dir){
-    if(!occupied(current.type,current.x+dir,current.y,current.dir)) current.x+=dir;
-  }
-
-  function rotate(){
-    const nd=(current.dir+1)%4;
-    if(!occupied(current.type,current.x,current.y,nd)) current.dir=nd;
-  }
-
-  document.addEventListener('keydown',ev=>{
-    if(ev.keyCode===37) move(-1);
-    else if(ev.keyCode===39) move(1);
-    else if(ev.keyCode===38) rotate();
-    else if(ev.keyCode===40) drop();
+  document.addEventListener('keydown',e=>{
+    if(!current) return;
+    if(e.key==='ArrowLeft' && !collide(current.x-1,current.y,current.shape)) current.x--;
+    if(e.key==='ArrowRight' && !collide(current.x+1,current.y,current.shape)) current.x++;
+    if(e.key==='ArrowDown' && !collide(current.x,current.y+1,current.shape)) current.y++;
+    if(e.key==='ArrowUp') {
+      let shape = current.shape[0].length===current.shape.length ? current.shape : current.shape[0].map((_,i)=> current.shape.map(row=> row[i]).reverse());
+      if(!collide(current.x,current.y,shape)) current.shape=shape;
+    }
   });
+}
 
-  function randomPiece(){
-    return {type:pieces[Math.floor(Math.random()*pieces.length)],x:3,y:0,dir:0};
+// ------------------- Mario -------------------
+function startMario() {
+  panel.style.display = 'flex';
+  gameDiv.innerHTML = `
+    <div id="marioGame" style="width:100%;height:100%;"></div>
+  `;
+  const gameContainer = document.getElementById('marioGame');
+  EJS_player = "#marioGame";
+  EJS_core = "nes";
+  EJS_color = "#000000";
+  EJS_startOnLoaded = true;
+  EJS_pathtodata = "https://cdn.jsdelivr.net/gh/a456pur/seraph@81f551ca0aa8e3d6018d32d8ac5904ac9bc78f76/storage/emulatorjs/data";
+  EJS_gameUrl = "https://cdn.jsdelivr.net/gh/bubbls/UGS-file-encryption@e0c78a58432c6486ebe1a50a78d263df65809a83/Super%20Mario%20Bros.%20(Europe).zip";
+  loadGame();
+}
+
+function loadGame() {
+  if(!window.loaderIncluded) {
+    window.loaderIncluded=true;
+    let script = document.createElement("script");
+    script.src="https://cdn.jsdelivr.net/gh/a456pur/seraph@81f551ca0aa8e3d6018d32d8ac5904ac9bc78f76/storage/emulatorjs/data/loader.js";
+    document.body.appendChild(script);
+    script = document.createElement("script");
+    script.src="https://cdn.jsdelivr.net/gh/a456pur/seraph@ae2fcc6d6a9cd051654fcc0519080db1f79cf2a7/storage/js/cloak.js";
+    document.body.appendChild(script);
   }
-
-  update();
-  tetrisInstance={stop:()=>playing=false};
 }
 </script>
 
