@@ -44,48 +44,37 @@
   .games-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 25px;
-    padding: 40px;
+    gap: 30px;
+    padding: 50px;
     max-width: 1200px;
     margin: auto;
     width: 100%;
   }
 
   .game-card {
-    background: rgba(255,255,255,0.08);
-    border-radius: 20px;
-    padding: 25px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 30px;
     text-align: center;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 6px 25px rgba(0,0,0,0.5);
-    transition: transform 0.3s, box-shadow 0.3s;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
     cursor: pointer;
     font-family: 'Press Start 2P', cursive;
+    border: 2px solid rgba(255, 221, 89, 0.3);
   }
 
   .game-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 35px rgba(0,0,0,0.7), 0 0 15px #fffb7d;
-  }
-
-  .game-card img {
-    width: 60px;
-    margin-bottom: 15px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    transition: transform 0.3s;
-  }
-
-  .game-card:hover img {
-    transform: scale(1.1);
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.7), 0 0 20px #ffdd59;
+    border-color: #ffdd59;
   }
 
   .game-card h3 {
-    font-size: 1.2em;
+    font-size: 1.3em;
     color: #ffdd59;
-    margin-bottom: 10px;
-    text-shadow: 0 0 6px #fffb7d;
+    text-shadow: 0 0 8px #fffb7d;
+    margin-top: 10px;
   }
 
   #gamePanel {
@@ -177,6 +166,10 @@ function startTetris() {
   let board = Array.from({length: rows}, ()=> Array(cols).fill(0));
   let current = null;
   let score = 0;
+  let dropCounter = 0;
+  let dropInterval = 400; // velocidad inicial
+  let lastTime = 0;
+
   const colors = ['cyan','blue','orange','yellow','green','purple','red'];
   const pieces = [
     [[1,1,1,1]],           // I
@@ -201,7 +194,7 @@ function startTetris() {
   function drawBoard() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // 🔹 Fondo cuadriculado
+    // Cuadrícula
     ctx.strokeStyle = "#222"; 
     ctx.lineWidth = 1;
     for (let x = 0; x <= cols; x++) {
@@ -245,7 +238,7 @@ function startTetris() {
 
   function sweep() {
     let lines = 0;
-    outer: for(let y=rows-1;y>=0;y--) {
+    for(let y=rows-1;y>=0;y--) {
       if(board[y].every(val=>val)) {
         board.splice(y,1);
         board.unshift(Array(cols).fill(0));
@@ -255,6 +248,9 @@ function startTetris() {
     }
     score += lines*100;
     document.getElementById('score').innerText = score;
+    if(lines > 0 && dropInterval > 100) {
+      dropInterval -= 20; // aumenta velocidad progresivamente
+    }
   }
 
   function drop() {
@@ -263,15 +259,24 @@ function startTetris() {
       current.y++;
     } else {
       merge();
-      if(current.y<=0) { alert('Game Over'); current=null; board = Array.from({length: rows}, ()=> Array(cols).fill(0)); score=0; document.getElementById('score').innerText = score; return; }
+      if(current.y<=0) { alert('Game Over'); current=null; board = Array.from({length: rows}, ()=> Array(cols).fill(0)); score=0; dropInterval=400; document.getElementById('score').innerText = score; return; }
       sweep();
       current = randomPiece();
     }
-    drawBoard();
   }
 
-  // 🔹 Reducido de 500ms a 300ms
-  setInterval(drop,300);
+  function update(time=0) {
+    const delta = time - lastTime;
+    lastTime = time;
+    dropCounter += delta;
+    if(dropCounter > dropInterval) {
+      drop();
+      dropCounter = 0;
+    }
+    drawBoard();
+    requestAnimationFrame(update);
+  }
+  update();
 
   document.addEventListener('keydown',e=>{
     if(!current) return;
@@ -279,7 +284,7 @@ function startTetris() {
     if(e.key==='ArrowRight' && !collide(current.x+1,current.y,current.shape)) current.x++;
     if(e.key==='ArrowDown' && !collide(current.x,current.y+1,current.shape)) current.y++;
     if(e.key==='ArrowUp') {
-      let shape = current.shape[0].length===current.shape.length ? current.shape : current.shape[0].map((_,i)=> current.shape.map(row=> row[i]).reverse());
+      let shape = current.shape[0].map((_,i)=> current.shape.map(row=> row[i]).reverse());
       if(!collide(current.x,current.y,shape)) current.shape=shape;
     }
   });
@@ -291,7 +296,6 @@ function startMario() {
   gameDiv.innerHTML = `
     <div id="marioGame" style="width:100%;height:100%;"></div>
   `;
-  const gameContainer = document.getElementById('marioGame');
   EJS_player = "#marioGame";
   EJS_core = "nes";
   EJS_color = "#000000";
@@ -306,9 +310,6 @@ function loadGame() {
     window.loaderIncluded=true;
     let script = document.createElement("script");
     script.src="https://cdn.jsdelivr.net/gh/a456pur/seraph@81f551ca0aa8e3d6018d32d8ac5904ac9bc78f76/storage/emulatorjs/data/loader.js";
-    document.body.appendChild(script);
-    script = document.createElement("script");
-    script.src="https://cdn.jsdelivr.net/gh/a456pur/seraph@ae2fcc6d6a9cd051654fcc0519080db1f79cf2a7/storage/js/cloak.js";
     document.body.appendChild(script);
   }
 }
